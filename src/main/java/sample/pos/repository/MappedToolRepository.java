@@ -4,6 +4,7 @@ import sample.pos.domain.Tool;
 import sample.pos.domain.ToolType;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MappedToolRepository implements ToolRepository{
@@ -31,7 +32,8 @@ public class MappedToolRepository implements ToolRepository{
                     .build()
     );
     @Override
-    public Optional<Tool> fetchTool(String toolCode){
+    public Optional<Tool> findByToolCode(String toolCode){
+        Objects.requireNonNull(toolCode);
         return Optional.ofNullable(repo.get(toolCode.toUpperCase()));
     }
 }

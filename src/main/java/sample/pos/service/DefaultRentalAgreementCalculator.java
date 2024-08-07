@@ -32,13 +32,14 @@ public class DefaultRentalAgreementCalculator implements RentalAgreementCalculat
 
     @Override
     public RentalAgreement calculate(Tool tool, int dayCount, int discountPercent, LocalDate checkoutDate) {
+
         var toolType = tool.getType();
 
         var chargeDays = getChargeDays(checkoutDate, dayCount, toolType.isChargeOnWeekdays(), toolType.isChargeOnWeekends(), toolType.isChargeOnHolidays());
+
         var prediscount = toolType.getDailyCharge().multiply(BigDecimal.valueOf(chargeDays));
 
-        var discountAmount = prediscount.multiply(BigDecimal.valueOf(discountPercent))
-                .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+        var discountAmount = calculateDiscountAmount(prediscount, discountPercent);
 
         var finalAmount = prediscount.subtract(discountAmount);
 
@@ -56,6 +57,17 @@ public class DefaultRentalAgreementCalculator implements RentalAgreementCalculat
                 .discountAmount(discountAmount)
                 .finalCharge(finalAmount)
                 .build();
+    }
+
+    private BigDecimal calculateDiscountAmount(BigDecimal preDiscountAmount, int discountPercent){
+
+        // prediscountAmount * discountPercent/100 => (prediscountAmount * discountPercent)/100
+
+        // BigDecimal wrappers for computation
+        var discountPercentBD = BigDecimal.valueOf(discountPercent);
+        var by100DB = BigDecimal.valueOf(100);
+
+        return (preDiscountAmount.multiply(discountPercentBD)).divide(by100DB, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
     }
 
     /**

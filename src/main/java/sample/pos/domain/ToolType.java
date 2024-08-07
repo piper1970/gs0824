@@ -1,5 +1,6 @@
 package sample.pos.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
  * The ToolType enum represents the limited pre-set values for ToolType
  */
 @Getter
+@AllArgsConstructor
 public enum ToolType {
     LADDER("Ladder", BigDecimal.valueOf(1.99), true, true, false),
     CHAINSAW("ChainSaw", BigDecimal.valueOf(1.49), true, false, true),
@@ -19,11 +21,4 @@ public enum ToolType {
     private final boolean chargeOnWeekends;
     private final boolean chargeOnHolidays;
 
-    ToolType(String name, BigDecimal dailyCharge, boolean chargeOnWeekdays, boolean chargeOnWeekends, boolean chargeOnHolidays){
-        this.name = name;
-        this.dailyCharge = dailyCharge;
-        this.chargeOnWeekdays = chargeOnWeekdays;
-        this.chargeOnWeekends = chargeOnWeekends;
-        this.chargeOnHolidays = chargeOnHolidays;
-    }
 }
