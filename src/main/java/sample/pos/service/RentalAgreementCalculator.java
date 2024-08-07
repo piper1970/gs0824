@@ -7,6 +7,4 @@ import java.time.LocalDate;
 
 public interface RentalAgreementCalculator {
     RentalAgreement calculate(Tool tool, int dayCount, int discountPercent, LocalDate checkoutDate);
-
-
 }
