@@ -40,7 +40,6 @@ public class MappedToolPOS implements ToolPOS {
         return toolRepository.findByToolCode(toolCode)
                 .map(tool -> calculator.calculate(tool, dayCount, discountPercent, checkoutDate))
                 .orElseThrow(() -> new InvalidToolCodeException("Unable to find tool with given code", toolCode));
-
     }
 
     @Override
