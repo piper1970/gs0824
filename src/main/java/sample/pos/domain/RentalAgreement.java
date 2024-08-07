@@ -14,15 +14,6 @@ import java.time.LocalDate;
 @Builder
 @Value
 public class RentalAgreement {
-
-    public static RentalAgreement INVALID_RENTAL_AGREEMENT;
-
-    static {
-        INVALID_RENTAL_AGREEMENT = RentalAgreement.builder()
-                .toolCode("INVALID TOOL CODE")
-                .build();
-    }
-
     String toolCode;
     String toolType;
     String toolBrand;
