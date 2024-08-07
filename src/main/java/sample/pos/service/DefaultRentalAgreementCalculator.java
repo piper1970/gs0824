@@ -54,22 +54,22 @@ public class DefaultRentalAgreementCalculator implements RentalAgreementCalculat
     private int getChargeDays(LocalDate start, int dayCount, boolean excludeWeekends, boolean excludeHolidays) {
 
         // Use predicate composition to capture weekends and holidays
-        Predicate<LocalDate> isWeekend = ld -> excludeWeekends && ld.getDayOfWeek() == DayOfWeek.SATURDAY
-                || ld.getDayOfWeek() == DayOfWeek.SUNDAY;
+        Predicate<LocalDate> isWeekend = ld -> ((ld.getDayOfWeek() == DayOfWeek.SATURDAY)
+                || (ld.getDayOfWeek() == DayOfWeek.SUNDAY)) && excludeWeekends;
 
         // labor day is always the first monday in september, so only one predicate needed here
-        Predicate<LocalDate> isLaborDay = ld -> excludeHolidays && ld.getMonth() == Month.SEPTEMBER
-                && ld.getDayOfWeek() == DayOfWeek.MONDAY && ld.getDayOfMonth() <= 7;
+        Predicate<LocalDate> isLaborDay = ld -> (ld.getMonth() == Month.SEPTEMBER
+                && ld.getDayOfWeek() == DayOfWeek.MONDAY && ld.getDayOfMonth() <= 7) && excludeHolidays;
 
         // independence day is celebrated either directly on the 4th (if non-weekend), or
         // either on Friday, July 3rd, or Monday, July5th
         // two predicates needed to capture logic here.
-        Predicate<LocalDate> isIndependenceDayExact = ld -> excludeHolidays && ld.getMonth() == Month.JULY
-                && ld.getDayOfMonth() == 4;
+        Predicate<LocalDate> isIndependenceDayExact = ld -> (ld.getMonth() == Month.JULY
+                && ld.getDayOfMonth() == 4) && excludeHolidays;
 
-        Predicate<LocalDate> isIndependenceDayOnWeekend = ld -> excludeHolidays && ld.getMonth() == Month.JULY &&
+        Predicate<LocalDate> isIndependenceDayOnWeekend = ld -> (ld.getMonth() == Month.JULY &&
                 ((ld.getDayOfMonth() == 3 && ld.getDayOfWeek() == DayOfWeek.FRIDAY) ||
-                        (ld.getDayOfMonth() == 5 && ld.getDayOfWeek() == DayOfWeek.MONDAY));
+                        (ld.getDayOfMonth() == 5 && ld.getDayOfWeek() == DayOfWeek.MONDAY))) && excludeHolidays;
 
 
         // combine all predicates in gigantic OR, negating in the Stream to act as filter.
@@ -78,6 +78,7 @@ public class DefaultRentalAgreementCalculator implements RentalAgreementCalculat
 
         // Stream through all days, excluding holidays and/or weekends if flagged to exclude
         return start.datesUntil(start.plusDays(dayCount))
+                .peek(ld -> System.out.printf("Test for %s (%s): %b%n", ld, ld.getDayOfWeek(), isChargeExcluded.negate().test(ld)))
                 .filter(isChargeExcluded.negate())
                 .mapToInt(date -> 1)
                 .sum();
