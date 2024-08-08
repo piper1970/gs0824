@@ -13,6 +13,8 @@ public class RentalAgreementTextRenderer implements Renderer<RentalAgreement>{
 
     private static final DateTimeFormatter DT_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/uu");
 
+    private static final ThreadLocal<NumberFormat> NUMBER_FORMATTER = ThreadLocal.withInitial(() -> NumberFormat.getCurrencyInstance(Locale.US));
+
     /**
      * Renders RentalAgreement parameter as a block of text, with Title: Value semantics for each field.
      *
@@ -56,8 +58,7 @@ public class RentalAgreementTextRenderer implements Renderer<RentalAgreement>{
 
     private String formatBigDecimal(BigDecimal bd){
         // 12.125 -> $12.13
-        // NumberFormat not thread safe, so creating currency instance per call.
-        return NumberFormat.getCurrencyInstance(Locale.US).format(bd.setScale(2, RoundingMode.HALF_UP));
+        return NUMBER_FORMATTER.get().format(bd.setScale(2, RoundingMode.HALF_UP));
     }
 
     private String formatDate(LocalDate date){
