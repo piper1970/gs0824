@@ -66,6 +66,8 @@ Here are a number of additions that might make this more robust:
   * Spring and Guice are few that come to mind
 * Add service (assuming use of RentalAgreement Repo) to look for late returns
   * Could generate mock emails, add late charges to RentalAgreements, etc.
+* Implement with real database, either in-mem or via docker image
+* Add Docker build file (assuming an external endpoint is used) for possible inclusion into a managed cluster
 
 
 ## Assumptions Made
