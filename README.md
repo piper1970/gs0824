@@ -75,7 +75,7 @@ The following assumptions have been made regarding the logic of the application
 1. ~~The checkout date counts as a chargeable day, but not the check-in date~~
    * ~~If a check-in date lands on a holiday (or weekend), and the tool type does not charge for holidays (or weekends), it will have no effect on the calculated number of charge days.~~
      * ~~If a checkout date lands on a holiday (or weekend), and the tool type does not charge for holidays (or weekends), it will have an effect on the calculated days, subtracting one day for the holiday.~~
-     * _Per reply from David, the first assumption above was incorrect. The checkout day is not counted as a chargeable day, but the checkin day is._
+     * _Per reply from Cardinal Financial, my first assumption was incorrect. The checkout day is __not__ counted as a chargeable day, but the checkin day is._
 3. Date formats are in __MM/DD/YY__ format.
    * This was the original spec for the printout, but the example dates for the unit tests parameters were in __M/D/YY__ format. I've chosen to adhere to the former format spec, __MM/DD/YY__.
 
