@@ -33,10 +33,11 @@ not currently implemented, but could be later on) for the operator and user to s
 ### Annotation Processing Enabled in IDE
 
 ## Running tests
-I added additional tests for the calculator test to cover all the exclusion logic.
+DISCLAIMER: <small>I added additional tests for the calculator test to cover all the exclusion logic.
 I also ran the expected JUnit test to cover the end cases provided.
 I added a script in the build.gradle file to print out the STD_OUT results of the tests. 
-I cannot claim credit for this script, however.  It came from user `Shubham Chaudhary` at https://stackoverflow.com/questions/3963708/gradle-how-to-display-test-results-in-the-console-in-real-time
+I cannot claim credit for this script, however.  It came from user `Shubham Chaudhary` at 
+https://stackoverflow.com/questions/3963708/gradle-how-to-display-test-results-in-the-console-in-real-time </small>
 
 ### Windows
 * To run all tests, from the root directory, type
