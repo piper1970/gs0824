@@ -5,6 +5,7 @@ import sample.pos.domain.Tool;
 
 import java.time.LocalDate;
 
+@FunctionalInterface
 public interface RentalAgreementCalculator {
     RentalAgreement calculate(Tool tool, int dayCount, int discountPercent, LocalDate checkoutDate);
 }

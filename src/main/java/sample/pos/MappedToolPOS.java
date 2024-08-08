@@ -1,49 +1,53 @@
 package sample.pos;
 
+import sample.pos.domain.CheckinRequest;
 import sample.pos.domain.RentalAgreement;
-import sample.pos.exceptions.InvalidDayCountException;
-import sample.pos.exceptions.InvalidDiscountException;
-import sample.pos.exceptions.InvalidToolCodeException;
+import sample.pos.handlers.Handler;
+import sample.pos.processors.Processor;
 import sample.pos.renderers.Renderer;
-import sample.pos.repository.ToolRepository;
-import sample.pos.service.RentalAgreementCalculator;
 
-import java.io.PrintStream;
-import java.time.LocalDate;
+/**
+ * POS-Handler used with an in-house tool repository consisting of a local Tool Hashmap.
+ * <p>
+ * Processing of RentalAgreements equates to printing them out on the screen. No RentalAgreement persistence
+ * takes place.
+ */
+public class MappedToolPOS implements Handler<CheckinRequest, RentalAgreement>, Processor<RentalAgreement> {
 
-public class MappedToolPOS implements ToolPOS {
 
-    private final ToolRepository toolRepository;
-
-    private final RentalAgreementCalculator calculator;
-
+    /**
+     * Handles conversion of RentalAgreement to a printable string
+     */
     private final Renderer<RentalAgreement> renderer;
 
-    public MappedToolPOS(ToolRepository toolRepository, RentalAgreementCalculator calculator, Renderer<RentalAgreement> renderer) {
-        this.toolRepository = toolRepository;
-        this.calculator = calculator;
+    /**
+     * Delegate for handling the checkout/handler logic
+     */
+    private final Handler<CheckinRequest, RentalAgreement> handlerDelegate;
+
+    public MappedToolPOS(Renderer<RentalAgreement> renderer,
+                         Handler<CheckinRequest, RentalAgreement> handlerDelegate) {
         this.renderer = renderer;
+        this.handlerDelegate = handlerDelegate;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public RentalAgreement checkout(String toolCode, int dayCount, int discountPercent, LocalDate checkoutDate) throws InvalidDayCountException, InvalidDiscountException, InvalidToolCodeException {
-        // validate input; dayCount > 0, 0 <= discountPercent <= 100
-        if (dayCount <= 0) {
-            throw new InvalidDayCountException("Day count must be greater than 0", dayCount);
-        }
-        if (discountPercent < 0 || discountPercent > 100) {
-            throw new InvalidDiscountException("Discount must be between 0 and 100", discountPercent);
-        }
-
-
-        // lookup Tool, and create rental agreement, if found
-        return toolRepository.findByToolCode(toolCode)
-                .map(tool -> calculator.calculate(tool, dayCount, discountPercent, checkoutDate))
-                .orElseThrow(() -> new InvalidToolCodeException("Unable to find tool with given code", toolCode));
+    public RentalAgreement handle(CheckinRequest checkinRequest) throws Exception {
+        return handlerDelegate.handle(checkinRequest);
     }
 
+    /**
+     * Prints out rental agreement to standard output.
+     * <p>
+     * Relies on {@link Renderer} object to render rental agreement in proper format
+     *
+     * @param rentalAgreement Item to print to standard output
+     */
     @Override
-    public void printRentalAgreement(PrintStream out, RentalAgreement agreement) {
-        printRentalAgreement(out, agreement, renderer);
+    public void process(RentalAgreement rentalAgreement) {
+        System.out.println(renderer.render(rentalAgreement));
     }
 }
