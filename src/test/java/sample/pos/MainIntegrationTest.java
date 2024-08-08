@@ -162,12 +162,12 @@ class MainIntegrationTest {
         /* Info about sale:
          *   Checkout day is 7/2/15, a Thursday
          *   Saturday is July4th (holiday, celebrated on July 3rd)
-         *   Checkin day is Saturday, July 11th, 2015 (excluded)
+         *   Checkin day is Saturday, July 11th, 2015 (included in billing cycle)
          *   Jackhammers are charged weekdays only, excluding holidays
-         *   With 1.5 weekend and holiday, total charged rental days should be 6
+         *   With 3 weekend days and holiday, total charged rental days should be 5
          *   Jackhammer daily cost is $2.99
          *   There is no discount
-         *   The final amount, with discount, would be $17.94
+         *   The final amount, with discount, would be $14.95
          */
 
         var request = CheckinRequest.builder()
@@ -182,8 +182,8 @@ class MainIntegrationTest {
             pos.process(rentalAgreement); // printout results to console
             assertAll(
                     () -> assertEquals(LocalDate.of(2015, 7, 11), rentalAgreement.getDueDate(), "Due date is incorrect"),
-                    () -> assertEquals(17.94, rentalAgreement.getFinalCharge().doubleValue(), "Final amount is incorrect"),
-                    () -> assertEquals(6, rentalAgreement.getChargeDays(), "Total charge days incorrect"),
+                    () -> assertEquals(14.95, rentalAgreement.getFinalCharge().doubleValue(), "Final amount is incorrect"),
+                    () -> assertEquals(5, rentalAgreement.getChargeDays(), "Total charge days incorrect"),
                     () -> assertEquals(2.99, rentalAgreement.getDailyRentalCharge().doubleValue(), "Daily Rental Charge incorrect")
             );
         });

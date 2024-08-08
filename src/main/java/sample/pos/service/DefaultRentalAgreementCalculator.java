@@ -16,13 +16,10 @@ public class DefaultRentalAgreementCalculator implements RentalAgreementCalculat
     private static final Predicate<LocalDate> IS_WEEKEND = ld -> ld.getDayOfWeek() == DayOfWeek.SATURDAY || ld.getDayOfWeek() == DayOfWeek.SUNDAY;
     private static final Predicate<LocalDate> IS_WEEKDAY = IS_WEEKEND.negate();
 
-    // Helper predicates for INDEPENDENCE_DAY_WEEKEND
-
-    // For a Saturday 4th of July
+    /* Helper predicates for INDEPENDENCE_DAY_WEEKEND */
     private static final Predicate<LocalDate> _IS_FRIDAY_JULY_3 = ld -> ld.getMonth() == Month.JULY && ld.getDayOfMonth() == 3 && ld.getDayOfWeek() == DayOfWeek.FRIDAY;
-
-    // For a Sunday 4th of July
     private static final Predicate<LocalDate> _IS_MONDAY_JULY_5 = ld -> ld.getMonth() == Month.JULY && ld.getDayOfMonth() == 5 && ld.getDayOfWeek() == DayOfWeek.MONDAY;
+    /* Helper predicates for INDEPENDENCE_DAY_WEEKEND */
 
     private static final Map<String, Predicate<LocalDate>> HOLIDAY_MAP = Map.of(
             "LABOR_DAY", ld -> ld.getMonth() == Month.SEPTEMBER && ld.getDayOfWeek() == DayOfWeek.MONDAY && ld.getDayOfMonth() <= 7,
@@ -77,7 +74,7 @@ public class DefaultRentalAgreementCalculator implements RentalAgreementCalculat
      * Each ToolType contains flags on whether to charge on weekdays, weekends and/or holidays.
      * Assuming weekdays are always charged, but adding flag here in case of any
      *
-     * @param start  Checkout data
+     * @param start  Checkout date.  Not included in billing cycle
      * @param dayCount number of days in billing cycle
      * @param includeWeekdays flag to include weekdays in the days to charge.  Should almost always be true
      * @param includeWeekends flag to weekends in the days to charge
@@ -98,7 +95,10 @@ public class DefaultRentalAgreementCalculator implements RentalAgreementCalculat
                 .reduce(reducerSeed, Predicate::or);
 
         // Stream through all days, excluding holidays, weekends or weekdays if flagged to exclude
-        return (int) start.datesUntil(start.plusDays(dayCount))
+        // NOTE: the checkout date is not counted as a charge day, but the checkin date is.
+        //       as a result, the start and end dates should be increased by 1
+        var adjustedStartDate = start.plusDays(1);
+        return (int) adjustedStartDate.datesUntil(adjustedStartDate.plusDays(dayCount))
                 .filter(exclusions.negate())
                 .count();
     }
